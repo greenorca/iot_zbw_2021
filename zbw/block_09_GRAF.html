@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IoT - Kurs Block 9</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style_zbw.css">
+    <link rel="stylesheet" href="../css/animate.css">
+  </head>
+  <body>
+    <textarea id="source">
+# IoT - Block 09
+
+## Roadmap Block 9
+.bigger_font[
+3. Intro Grafische Visualisierung mit Grafana
+]
+
+---
+
+# Daten aus Datenbank visualisieren
+
+## Möglichkeiten
+1. Mit Export-Daten Excel-Diagramme basteln (Informatiker weint leise)
+1. Mit Web-Programmiersprache Daten abfragen und Diagramme mit JS-Bibliothek erstellen (und täglich grüsst das Murmeltier)
+1. Datenvisualisierung mit System-Monitoring-Tool konfigurieren (e.g. Grafana, Sensu, Graphite)
+
+  ![grafana_intro.png](../img/grafana_intro.png)
+
+---
+
+# Grafana
+
+* Visualisierungs- und Alarm-Framework
+  - für verschiedenste Diagramtypen
+  - für verschiedenste Datenbank-Systeme
+* konfigurierbar, erweiterbar
+
+## Installation (für Raspberry Pi)
+```bash
+wget https://dl.grafana.com/oss/release/grafana-rpi_6.4.2_armhf.deb
+sudo dpkg -i grafana-rpi_6.4.2_armhf.deb
+```
+
+## Server starten (init.d service)
+
+* Grafana-server process als grafana user starten
+  ```
+  sudo service grafana-server start
+  ```
+
+* als Boot-Service konfigurieren:
+
+```
+sudo update-rc.d grafana-server defaults
+```
+
+## Grafana Installation testen
+
+Im Web browser: [localhost:3000](http://localhost:3000). Default User und Passwort ist *admin*.
+
+---
+
+# MySQL-Raumklima visualisieren
+
+1. Add Data Source: MySQL
+  - localhost:3000; DB-Namen, Benutzer und Passwort eingeben
+2. Add Dashboard -> Add Query<sup>&star;</sup>
+![grafana_query.png](../img/grafana_query.png)
+3. Visualisierung auswählen (z.B. Graph)
+
+<hr>
+.footnote.small[
+<sup>&star;</sup> GROUP BY: time($_interval, none) *bewirkt, dass die Werte der Zeitreihen zusammengefasst werden und reduziert dadurch die Netzbelastung (bei hochfrequenten Daten)
+
+]
+
+---
+
+    </textarea>
+    <script src="../js/remark-latest.min.js"></script>
+	 <!--script src="https://code.jquery.com/jquery-1.9.1.min.js"></script-->
+	 <script>
+      var slideshow = remark.create();
+
+    </script>
+  </body>
+</html>

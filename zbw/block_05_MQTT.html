@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IoT - Kurs Block 5</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style_zbw.css">
+    <link rel="stylesheet" href="../css/animate.css">
+  </head>
+  <body>
+    <textarea id="source">
+# IoT - Block 05
+
+## Roadmap Block 5
+.bigger_font[
+1. Intro MQTT
+2. Intro Grafische Ereignisfluss-Programmierung mit NodeRed
+]
+---
+
+# Message Queue Telemetry Transport
+
+* offenes Nachrichten<u>protokoll</u> für Machine-to-Machine-Kommunikation
+
+* Broker (Server) bietet "Topics" an
+
+* Topics zur Adressierung der Nachrichten *(beliebige UTF-8 Zeichenketten)*
+
+* Clients senden Nachrichten und abonnieren Updates für Topics beim Broker
+
+.img_3quart_width[
+![../img/mqtt_schema.png](../img/mqtt_schema.png)
+.reference[
+Quelle: [www.electromaker.io](https://www.electromaker.io/blog/article/an-introduction-to-message-queue-telemetry-transport-%28mqtt%29-17)
+]
+]
+---
+
+# Apache Mosquitto* auf Raspberry Pi
+
+## Vorbereitung am Server
+
+```
+apt-get install mosquitto mosquitto-clients
+```
+* erweiterte Konfiguration: siehe [mosquitto.org](https://mosquitto.org/man/mosquitto-conf-5.html)
+
+--
+count: false
+
+## MQTT testen
+
+1. Prüfen ob Mosquitto auf Server läuft: `systemctl status mosquitto`
+
+1. Konsolen-*Beobachter* für **alle** Topics in "iot_zbw" abonnieren:
+  ```
+    mosquitto_sub -h serverip -d -t iot_zbw/#
+  ```
+
+1. Client-Message senden an Sub-Topic iot_zbw/miracolix
+  ```
+  mosquitto_pub -h serverip -d -t iot_zbw/miracolix -m "Huhu Guggus"
+  ```
+
+## Auftrag:
+* Mosquitto auf Raspi installieren und testen
+
+<hr>
+.footnote.small[
+1. Mosquitto: Open-Source-Implementierung des MQTT-Protokolls
+2. Alternativer grafischer MQTT_Tester: [http://www.jensd.de/apps/mqttfx/](http://www.jensd.de/apps/mqttfx/)
+3. serverip: die IP-Adresse des Raspberry
+
+]
+
+---
+# Apache Mosquitto & Arduino
+
+## Arduino MQTT-Bibliothek installieren
+
+* Bibliothek: PubSubClient (kompatibel mit Arduino UNO, ESP3286 u.a.)
+* Beispielprogramm *mqtt_basic* ausprobieren
+* jede Sekunde DHT-Sensordaten an Raspi-MQTT senden
+* MQTT-Daten am Raspi monitoren
+
+```arduino
+void sendData(){
+  float temp=dht.readTemperature();
+  char* charBuf = "            ";
+  dtostrf(temp, 0, 2, charBuf); #converts float value into ASCII
+  client.publish("iot_zbw_sensor/room1/temperature",charBuf);
+
+  float humi=dht.readHumidity();
+  dtostrf(humi, 0, 2, charBuf);
+  client.publish("iot_zbw_sensor/room1/humidity",charBuf);
+}
+```
+
+Zeit: 45 Minuten
+
+???
+
+dtostrf: siehe https://www.microchip.com/webdoc/AVRLibcReferenceManual/group__avr__stdlib_1ga060c998e77fb5fc0d3168b3ce8771d42.html
+
+---
+# Apache Mosquitto &amp; Arduino: reloaded
+
+## Mehrere Messwerte gleichzeitig mit JSON senden
+
+* nur noch eine MQTT-Übertragung notwendig
+* benutzt *ArduinoJson* Bibliothek
+
+```arduino
+void sendData(){
+  float temp=dht.readTemperature();
+  StaticJsonDocument<256> payload;
+  payload["temperature"] = temp + micros()%10;
+
+  float humi=dht.readHumidity();
+  payload["humidity"] = humi;
+  char charBuf[150];
+  size_t n = serializeJson(payload, charBuf);
+  client.publish("iot_zbw_sensor/ruum1", charBuf, n);
+}
+```
+
+**Achtung:** Auswertung beim Empfänger muss darauf umgebaut werden
+
+---
+
+# MQTT - Subscription mit Python
+
+**Fragestellung:** Wie kann ein (Nicht-Arduino) Empfänger auf MQTT-Nachrichten vom Arduino reagieren?
+
+1. MQTT Bibliothek benutzen (hier für Python: PAHO MQTT Client)
+2. Topic(s) abonnieren
+3. Callback-Funktion programmieren
+
+```python
+import paho.mqtt.client as mqtt
+import json
+
+def handleIncomingMessages(client, userdata, message):
+    data = json.loads(message.payload) #convert payload string to JSON
+    print("Temp: ", data["temperature"])
+    # send an alert in case of overheating
+    if data["temperature"]>=30:
+      topic = "alerts/"+message.topic.split("/")[-1]
+      client.publish(topic, "holy cow!")
+
+if __name__ == '__main__':
+  client = mqtt.Client('meister_tux')
+  client.connect("192.168.0.30", port=1883)
+  client.subscribe("iot_zbw_sensor/#")
+  client.on_message = handleIncomingMessages
+  client.loop_forever()
+
+```
+<hr>
+.footnote.small[
+* MQTT-Clients gibt es für alle wichtigen Programmiersprachen
+]
+---
+# MQTT - Subscription: Callbacks mit Arduino
+
+**Frage: ** Wie kann der Arduino MQTT-Nachrichten empfangen?
+
+* "abonniert" *(subscribe)* bestimmte **topics**
+--
+count: false
+
+```arduino
+client.subscribe("alerts/ruum1");
+client.setCallback(callback);
+...
+
+void callback(char* topic, byte* payload, unsigned int length) {
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i=0;i<length;i++) {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+}
+```
+
+---
+
+# Ereignisfluss definieren mit Node-RED
+
+* verbindet Hardware (z.B. Arduinos, Raspis), APIs und Online-Services.
+* Browser-basierter Editor zum Erstellen von "Flows".
+  - unterstützt Anbindung an Datenbanken
+  - unterstützt MQTT, HTTP, uvm., weitere Plugins via NPM
+  - Vorverarbeiten und Weiterleiten von Nachrichten
+  - Benutzerdefinierte Funktionen mit Javascript erstellen
+
+* Vorteil: weniger selbst Programmieren, bessere Übersicht
+
+--
+count: false
+
+* NodeRed installieren
+  ```
+  sudo apt install npm nodered
+  ```
+
+* NodeRed ausführen (temporär, als regulärer Benutzer ohne sudo)
+  ```
+  node-red-pi --max-old-space-size=256
+  ```
+
+* NodeRed - Editor im Browser öffnen: [http://raspi-ip:3000](http://raspi-ip:3000)
+
+* MySQL Support nachinstallieren (im regulären Benutzerspace)
+  ```bash
+  cd ~/.nodered
+  npm install node-red-node-mysql
+  ```
+<hr>
+
+???
+
+TODO: Step-by-step Beschreibung für Flow-Setup MQTT->JSON->Function->MySQL
+
+grosser Schrott: npm-Installation nach diesem curl-Befehl hat auf Raspian Stretch funktioniert, nicht jedoch auf Buster (2019)
+.footnote.small[
+* node.js updaten auf Raspi: `curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -`
+]
+
+---
+
+# NodeRed - Variablen und Debugging
+
+* *nodes*
+  - empfangen (von links) und
+  - senden (nach rechts) Nachrichten (msg)
+
+* wichtige Nachrichten-Attribute: *msg.topic* und *msg.payload*
+
+* *Function node* besitzt drei vordefinierte Kontext-Variablen:
+  * context - the node’s local context
+  * flow - the flow scope context
+  * global - the global scope context
+
+
+```javascript
+var count = context.get('count')||0;
+count += 1;
+// store the value back
+context.set('count',count);
+node.debug("FunCount: "+count); // händische DEBUG-Ausgabe
+```
+
+---
+
+# Beispiel: INSERT MQTT-Daten in MySQL
+
+![nodered_flow_insertMySQL.png](../img/nodered_flow_insertMySQL.png)
+
+SQL-Statements in *Function* Node vorbereiten und as msg.topic an MySQL-Node weiterleiten:
+
+## INSERT_PREP
+```
+if (msg.payload){
+    msg.topic = "INSERT INTO nodered.log (key1, value) "
+    +"VALUES ('"+msg.topic+"', '"+msg.payload+"')";
+}
+return msg;
+```
+
+---
+# Beispiel: Zwei Inputs in *merge_input*
+
+```javascript
+context.set("i0", context.get("i0") || "");
+context.set("i1", context.get("i1") || false);
+
+if (msg.topic.indexOf("xtopic")===0) {
+  context.set("i1", msg.topic.split('/')[1]);
+}
+else if (msg.topic.indexOf("SELECT") === 0) {
+  context.set("i0",  msg.payload);
+}
+
+if (context.get("i0") !== "" && context.get("i1")) {
+  return {
+    topic: 'access/'+context.get("i1"),
+    payload: context.get("i0")
+  }
+}
+else {  return null; }
+```
+.img_half_width[
+![nodered_flow_mergeInputs.png](../img/nodered_flow_mergeInputs.png)
+]
+
+
+    </textarea>
+    <script src="../js/remark-latest.min.js"></script>
+	 <!--script src="https://code.jquery.com/jquery-1.9.1.min.js"></script-->
+	 <script>
+      var slideshow = remark.create();
+
+    </script>
+  </body>
+</html>

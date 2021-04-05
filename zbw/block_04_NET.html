@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IoT - Kurs Block 4</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style_zbw.css">
+    <link rel="stylesheet" href="../css/animate.css">
+  </head>
+  <body>
+    <textarea id="source">
+# IoT - Block 04
+
+## Roadmap
+.bigger_font[
+1. Überblick Kommunikationarten
+3. Ethernet-Schnittstelle aktivieren
+4. TCP/IP Protokolle und Verbindungsarten
+5. Mini-Projekt: Daten an Server schicken
+]
+---
+
+# Kommunikationsarten
+
+## Zentrale Fragestellung: Wie kann ich ...
+.bigger_font[
+- Messwerte von &mu;C an weitere &mu;C, PC oder Server kommunizieren?
+- Signale vom anderen Geräten empfangen?
+]
+
+--
+
+## Lösung: Kommunikation
+
+.bigger_font[
+- Seriell: oldie but goldie
+- LAN/WLAN
+- LoRa, Bluetooth, Infrarot
+]
+.col6[
+![Lora-GPS Webinterface](../img/lora_gps_webinterface.png)
+]
+
+---
+
+# Kommunikation über TCP/IP (Basics)
+.col6.full_height[
+
+### TCP vs. UDP
+- *Transportprotokolle* für Nachrichten
+- Adressierung via *IP-Adresse + Port*
+
+#### **T**ransmission **C**ontrol **P**rotocol:
+- verbindungsorientiert
+- Empfangskontrolle
+- mit Fehlerbehandlung
+
+#### **U**ser **D**atagramm **P**rotocol:
+- *best effort*
+- keine logische Verbindung
+- keine Empfangskontrolle
+- allenfalls Prüfsumme
+- schnell (Einsatz oft für Multimedia-Streaming)
+
+]
+
+--
+count: false
+
+.col6.full_height[
+### Verbindungsarten
+<br>
+#### Peer 2 Peer
+- ohne zentrale Server
+- gleichberechtige Teilnehmer
+- permanentes Empfangen und Senden von Netzwerkdaten
+- z.B. Gnutella, BitTorrent, Freenet
+
+#### Client-Server
+- Server (z.B. Raspberry) lauscht permanent
+- Server sendet nur auf Anfrage <br>(Request - Response)
+- übliche Anwendungsprotokolle: HTTP, SMTP, FTP
+]
+
+---
+# Arduino im IoT
+
+.col6[
+### Arduino Ethernet-Shield
+<br>
+.img_half_width[
+![Arduino ETH](../img/arduino_eth0_shield.jpg)
+]
+* enthält Puffer zum Zwischenspeichern von empfangenen Daten
+* als Server oder Client benutzen
+* enthält Micro-SD Slot (für Messdaten oder HTML-Seiten)
+
+### Benutzung:
+
+* Kommunikation Arduino &harr; Shield via **SPI** Bus
+* Pin 11, 12, 13 + Pin 10 als **SS** reserviert
+* Pin 4 als **SS** für SD-Kartenleser
+* **kein SSL!** (zu wenig Rechenleistung)
+]
+
+--
+count:false
+
+.col6[
+### Vorgehen:
+1. Doku lesen:
+	- [Hardware-Setup](https://www.arduino.cc/en/Reference/Ethernet)
+	- [Ethernet](https://www.arduino.cc/en/Reference/Ethernet)
+	- [EthernetClient](https://www.arduino.cc/en/Reference/EthernetClient)
+1. USB-Anschluss abkleben(!!)
+1. Shield aufstecken
+2. Ethernet Library laden (per IDE)
+3. MAC<sup>1</sup> und IP<sup>2</sup> konfigurieren
+5. Funktionalität programmieren
+
+### Hinweise
+* <sup>1</sup> MAC-Adressen in einem Netz müssen einmalig sein. Bitte letztes Byte *"durchzählen"*
+* <sup>2</sup> IP-Adressierung, Gateway und DNS per DHCP
+]
+
+---
+# Beispiele &rarr; Ethernet &rarr; WebClient
+
+.col6.small[
+
+```arduino
+#include <Ethernet.h>
+// 6 byte MAC address, hexdecimal
+byte mac[] = {0xDE,0xAD, 0xAD,0xAD, 0xAD, 0x01};
+String server = "192.168.42.1";
+// own ip
+IPAddress ip(192, 168, 1, 66);
+EthernetClient client;
+
+void setup() {
+  Serial.begin(115200);
+  if (Ethernet.begin(mac) == 0) {
+    Serial.println("DHCP failed");
+    // configure static IP address
+    Ethernet.begin(mac, ip);
+  }
+  Serial.println("local IP: ");
+  Serial.println(Ethernet.localIP());
+  delay(1000);// wait a second
+  // connect + HTTP request:
+  if (client.connect(server.c_str(), 80)) {
+ 	connect();
+  } else {
+    Serial.println("connect fail");
+  }
+}
+```
+
+]
+
+.col6.small[
+
+```arduino
+void connect(){
+  client.println(
+    "GET / HTTP/1.1"
+  );
+  client.println(
+    "Host: measures.ruum42.ch"
+  );
+  client.println("Connection: close");
+  client.println();
+}
+
+void loop(){
+  // send response to serial port
+  if (client.available()) {
+    // read server response byte
+    char c = client.read();
+    // print it on serial port
+    Serial.print(c);
+  }
+
+  if (!client.connected()) {
+    Serial.println("\ndisconnect\n");
+    client.stop();
+    for(;;) ; //stay in endless loop
+  }
+}
+```
+
+]
+
+<hr>
+
+--
+count: false
+
+.small[
+* erstellt einmalige Verbindung zu Google **(GET-Request)**
+* liest ** RESPONSE** und sendet Antwort byteweise auf serielle Schnittstelle
+]
+
+???
+Quellcode kurz vorstellen; Beispielprogramm ausprobieren: Datei &rarr; Beispiele &rarr; Ethernet &rarr; WebClient
+
+
+---
+# Übung: Daten an Webserver senden
+
+### Ausgangslage
+
+Sie wissen, wie der Arduino-Ethernet Header angeschlossen wird, und wie man damit einfache HTTP-Requests absendet.
+Nun übertragen Sie Messwerte vom Arduino zu einem vorbereiteten Webserver auf IP 192.168.42.1, der die Daten visualisiert. <!--Den Code für den Server finden Sie als vorbereitetes Python-Skript im Modulordner.<sup>1</sup>-->
+
+### Auftrag
+
+<!--1. Starten Sie den Server (z.B.via Terminal: `python Desktop/http_server.py`). Betrachten Sie die Ausgabe unter `http://*server_ip*:8080/info`.
+-->
+2. Senden Sie alle 10 Sekunden Messwerte vom DHT11-Sensor mit dem Arduino mit Ihrer selbstgewählten Geräte-ID an folgende URL: `http://192.168.42.1?`. Verpacken Sie die Werte in einen GET-Request mit folgenden Parametern: `id=...&temp=...&humidity=... `
+3. Als Kontrolle rufen Sie die Werte von o.g. URL mit Ihrem Webbrowser ab.
+4. Analysieren Sie die Server-Antwort mit dem seriellen Monitor. Wie können Sie mit dem Arduino darauf reagieren?
+
+### Zeit: 40 Minuten
+
+???
+## Lösung:
+
+Http_Communication
+---
+
+# Beispiel UDP - Verbindung
+
+[UDPSendReceiveString](https://www.arduino.cc/en/Tutorial/UDPSendReceiveString)
+
+???
+rein informativ als Vorbereitung für RemoteRobi Game
+
+
+---
+class: animated slideInRight
+background-image: url(../img/arduino_uno.png)
+# Zusammenfassung
+
+Was haben Sie gelernt?
+
+
+
+
+    </textarea>
+    <script src="../js/remark-latest.min.js"></script>
+	 <!--script src="https://code.jquery.com/jquery-1.9.1.min.js"></script-->
+	 <script>
+      var slideshow = remark.create();
+
+    </script>
+  </body>
+</html>

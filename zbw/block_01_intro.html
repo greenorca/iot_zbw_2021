@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IoT-Projektwoche</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style_zbw.css">
+    <link rel="stylesheet" href="../css/animate.css">
+  </head>
+  <body>
+    <textarea id="source">
+
+
+# Wer wir sind: Ruum42
+
+* Hackerspace in St.Gallen
+* vernetzt mit CCC (Chaos Computer Club)
+* zeigen wie die (Computer-) Welt funktioniert
+
+--
+count:false
+.col6[
+## Ruum 42
+
+* Leute mit Freude am miteinander lernen
+* kreativer Umgang mit Technik im weitesten Sinn
+
+![ruum42](../img/ruum42.jpg)
+]
+
+--
+count:false
+
+.col6[
+## Antrieb
+
+- Neugier und Spass an der Freude
+- kaputt? das kann man sicher flicken
+
+]
+
+???
+
+* zuerst Ruum vorstellen
+* dann unserer
+* wer hat bereits mit IoT und/oder Arduinos zu tun gehabt?
+
+--
+count:false
+.col6[
+## Hackerethik:
+- Freiheit
+- Offenheit
+- Datenschutz
+- Security
+]
+
+---
+
+# Projektwoche IoT
+
+.col6[
+
+## Internet of Things:
+- fernbedienbare Aktoren, Sensoren
+- seit 1980ern in Industriesteuerungen
+- Daten sammeln und auswerten
+- *cool stuff:*
+	- proaktive Instandhaltung (UPS-Trucks)
+	- Wetterstationen
+<br><br><br><br>
+]
+
+.col6[
+[![ios1](../img/iot_schema.jpg)](../img/iot_schema.jpg)
+.reference[
+Quelle: https://twitter.com/jaguar_network
+]
+]
+
+--
+count:false
+
+.row[
+![ios1](../img/ios.png)
+]
+---
+
+# Internet of Things - Projektwoche
+
+.bigger_font[
+
+## Handlungsziele
+1. Wie unterscheiden sich Mikrocontroller und Mikroprozessoren?
+2. Wie sind Internet-of-Things Anwendungen aufgebaut?
+3. Wie analysiert man verlangte Funktionen und benötigte Input- und Outputsignale?
+5. Wie gliedert man den logischen Programmentwurf für IoT-Anwendungen?
+6. Wie wird der Programmentwurf umgesetzt?
+7. Wie testet und dokumentiert man IOT-Applikationen?
+]
+--
+count: false
+
+.col6[
+## Agenda:
+- 32 Lektionen (4 Tage a 8 Lektionen bzw. 8 Blöcke a 4 Lektionen)
+  - ca. 4 Blöcke Theorie + Praxis
+  - ca. 4 Blöcke Projekt + Demo
+  <br><br>
+]
+
+.col6[
+## Hilfreiche Vorkenntnisse:
+- allg. Programmierkenntnisse
+- Datenbank-Administration
+- Grundkenntnisse Netzwerke
+]
+???
+Appetit anregen :-)
+Allenfalls schon ganz kurz was zu Arduino sagen:
+- Open Source Hardware + Entwicklungsplattform zur komfortablen Mikrocontroller-Programmierung...
+-
+
+---
+background-image: url(../img/arduino_uno.png)
+# Kursablauf
+
+.row[
+## Grundlagen und Vorraussetzungen
+<br>
+
+.col6[
+### Block 1
+
+- Einführung Mikrocontroller vs. PC
+- Raspberry Pi vs. Arduino
+- erste Schritte mit Arduino
+- Elektrotechnik-Basics
+- Breadboard und Arduino GPIO
+
+### Block 2
+
+- elektronische Schaltungen
+- Sensoren und Aktoren
+- Multimeter
+]
+
+.col6[
+### Block 3
+
+- Mikrocontroller-Architektur
+- Interrupts und Sleep-Mode
+- Bussysteme
+  - I2C, SPI
+  - serielle Kommunikation
+
+### Block 4
+
+- Kommunikation Mikrocontroller
+- Client-Server Kommunikation
+- MQTT
+]
+]
+
+--
+count: false
+
+.row[
+
+## Kreatives Anwenden
+<br>
+.col6[
+### Block 5 - 6
+
+- IoT - Apps mit MQTT, NodeRed und Grafana
+]
+.col6[
+### Block 7 - 8
+
+- eigene Projekte
+<br><br>
+]
+]
+---
+
+# Mikrocontroller vs. Mikroprozessor
+
+.col6[
+## Mikrocontroller (&mu;C)
+- RAM, ROM und I/O integriert
+- integrierte analoge und digitale Ein- und Ausgänge (*engl. I/O*)
+- permanente Programmausführung
+- z.B. Atmel AVR (Arduino UNO)
+- preiswert und energieeffizient
+
+### Anwendung
+- Embedded Systems (Waschmaschinen, Drucker, IoT)
+]
+
+--
+count: false
+.col6[
+## Mikroprozessor
+- RAM, ROM etc. separat, Steuerung via Datenbus
+- Betriebssystem steuert Ausführung vieler Programme
+- kaum Low-Level I/O (USB, Audio)
+- teurer und energieintensiver als &mu;C
+
+### Anwendung
+- PC, Laptop, Server, Bankomaten etc.
+]
+
+--
+count: false
+
+.row[
+## Heute
+- Übergänge fliessend, z.B. Raspberry Pi:
+	- Peripherie im Chip integriert
+	- Low-Level I/Os
+	- Volles Linux Betriebssystem mit Multithreading
+]
+
+???
+- Prinzipien werden hier nur ganz kurz angesprochen
+- Ziel der ersten Stunde:
+	- nutzen Arduino-IDE, um Beispielcode zu laden und zu ändern
+	- überwachen Arduino via Serial Monitor
+---
+
+# Beispiele Mikrocontroller (&mu;C)
+
+.row[
+## Seit den 1980ern:
+- Waschmaschinen
+- Fernseher, Steroanlagen
+- Geschirrspüler
+- DVD-ROM Laufwerk, Maus
+- Industrieanlagen-Automation
+
+## IoT + Big Data
+- [UPS-Trucks mit ausgefeilter Sensorik proaktiv instandhalten](http://www.fieldtechnologies.com/news/gps-tracking-systems-installed-in-ups-trucks-driver-efficiency/)
+- OpenWeatherMap.org sammelt Daten privater Wetterstationen
+- Amazon Alexa, Dash Buttons uvm.
+]
+--
+count: false
+
+.row[
+## Was ist Arduino
+
+- OpenSource &mu;C Hardware + Software
+- soll kleinen und grossen *Kindern* die Freude am Programmieren vermitteln
+- Arduino, 3D-Drucker &amp; Co. demokratisieren Produktion
+- Benutzer bestimmen, was sie wollen und setzen selbst um
+  - Raumtemperatur oder Bodenfeuchtigkeit überwachen, regulieren
+  - Smarte "Klingel" mit Kamera
+  - Drohnen oder Wii-Controller selbst basteln
+]
+---
+
+# Arduino in Betrieb nehmen
+
+.div[.col6[
+1. Arduino-IDE installieren, starten
+2. Arduino via USB-Kabel anschliessen
+2. Board wählen *(Werkzeuge - Board)*
+3. Port wählen *(Werkzeuge - Port)*
+4. Beispielprogramm öffnen *(Datei - Beispiele - Basics - Blink)*
+6. Compile und Upload
+7. Port Monitor öffnen *(Werkzeuge - Serial Monitor)*
+]]
+
+--
+count: false
+
+.col6[
+[![Arduino-IDE](../img/arduino_ide_001.png)](../img/arduino_ide_001.png)
+]
+
+--
+count: false
+
+.col6[
+### void setup()
+- zu Beginn einmal durchlaufen
+- konfigurieren Ein/Ausgänge etc.
+
+### void loop()
+- nach setup() permanent durchlaufen
+]
+
+--
+count: false
+.col6[
+### Serial.println(...)
+- Daten vom Controller (via USB) an PC senden
+
+### delay(int n)
+- Ausführung für n Millisekunden unterbrechen
+]
+
+---
+
+# Aufgabe 1.1 a
+
+### Ausgangslage
+Mit der Arduino-IDE können Sie verschiedene Mikrocontroller mit `C++` programmieren. `C++`  ist `Java` und `C#` recht ähnlich. Ihr Vorwissen aus den vorangegangen Programmiermodulen wird Ihnen weiter helfen.
+
+Sie nutzen ein Beispielprogramm der Arduino-IDE, um die wichtigsten Funktionen der IDE und die grundsätzlichen Programmaufbau kennen zu lernen. Als Hilfsmittel steht Ihnen das Skript und das deutschsprachige [Arduino-Handbuch](http://www.netzmafia.de/skripten/hardware/Arduino/Arduino_Programmierhandbuch.pdf) sowie das Internet zur Verfügung.
+
+### Auftrag
+1. Arduino-IDE installieren und starten
+2. Arduino via USB-Kabel mit PC verbinden
+2. Board auswählen *(Werkzeuge - Board)*
+3. Port auswählen *(Werkzeuge - Port)*
+4. Beispielprogramm öffnen *(Datei - Beispiele - Basics - Blink)*
+6. Compile und Upload
+
+**Zeit:** 20 Minuten
+
+---
+
+# Aufgabe 1.1 b
+
+###Ziel:
+Sie lernen,  mit dem seriellen Monitor die Programmausführung zu überwachen und globale Variablen einzusetzen.
+### Auftrag: Erweitern Sie das Beispielprogramm.
+- Zählen Sie in der `loop()` die Anzahl der Durchläufe in einer globalen Variable
+- Geben Sie die Anzahl über die serielle Schnittstelle aus
+- Nach dem Upload öffnen Sie den Portmonitor via *Werkzeuge - Serial Monitor*
+
+**Zeit:** 20 Minuten
+
+--
+
+~~~arduino
+int z = 0; //globale Variable
+void setup(){
+  Serial.begin(9600); //Schnittstelle initialisieren mit Baudrate
+}
+
+void loop(){
+  Serial.println(z); // Ausgabe
+  z++;
+  delay(1000);
+}
+
+~~~
+
+???
+### Hinweise Dozent
+- [Arduino Tutorials](http://www.arduino.org/learning/tutorials/ide-examples)
+. Programmierhandbuch hervorheben
+- Zunächst nur Arduino ohne Breadboard
+- Code gemeinsam durcharbeiten,
+- Lernende helfen sich gegenseitig und erweitern Code um "Hello World" + globale Variable hoch zählen und ausgeben
+
+
+---
+# Elektrotechnik-Basics
+
+Ein Ausflug in die Grundlagen der Hardware und dessen Physik
+
+## Handlungsziele
+1. Grundbegriffe Spannung, Strom, Widerstand
+1. Stromkreis
+1. Erhaltungssätze (Kirchhoff)
+1. aktive und passive Bauelemente (Widerstand, LED, Transistor)
+1. Breadboard
+
+???
+Keine Angst, wir werden dazu keine komplizierten Formeln behandeln
+
+---
+# El. Potential, Spannung und Strom
+
+.row[
+## Potential:
+- Mass für Menge geladener Ladungsträger an einem Punkt
+- jeder Punkt im Raum hat ein elektrisches Potential (vergleichbar mit Druck oder Temperatur)
+- Ladungsträger: Elektronen (negativ) oder Ionen (positiv), einzelnes Elektron: -1,602 ⋅ 10^-19 C (Coulomb)
+]
+
+.row[
+## Elektrische Spannung
+* Potentialunterschied zwischen zwei Punkten
+* wird in der Einheit Volt (V) gemessen
+]
+
+.row[
+## Elektrischer Strom (I)
+
+- elektrische Potentiale gleichen sich aus, wenn sie mit einen leitfähigen Material verbunden sind
+- im Leiter fliessen Ladungsträger (Elektronen) von einem Potential zum anderen &rarr; **elektrischer Strom**.
+- Einheit: Ampere (A)
+]
+
+---
+# Elektrischer Widerstand (R)
+
+* elektrischer Widerstand:
+  - Materialeigenschaften eines Leiters
+  - bestimmt Fähigkeit, Ladungsträger zu transportieren
+* Je kleiner der Widerstand, je grösser der Strom
+* ohmschen Widerstand: Verhältnis Spannung/Strom konstant (z.B. alle Metalle)
+* Einheit: Ohm (&ohm;)
+
+
+# U = I &times; R
+
+---
+# Stromkreis, elektrische Schaltung
+
+![Elektrischer Stromkreis](../img/Elektrischer Stromkreis.jpg)
+
+Das elektrische Schema ist **die** Dokumentation einer Schaltung.
+
+---
+# Erhaltungssätze (Kirchhoff)
+
+.col6[
+
+![Maschensatz](../img/kirchhoffs-law-voltage.jpg)
+
+* aka *Maschensatz*
+
+]
+
+--
+.col6[
+![Knotensatz](../img/kirchhoffs-law-current.png)
+
+* aka *Knotensatz*
+]
+---
+# Bauelemente: elektrische Quelle
+
+<br>
+* erzeugt einen Potentialunterschied
+* stellt über längere Zeit Ladungsträger bereit
+
+* immer durch Umwandlung einer physikalischen Energieform in elektrische Energie
+
+.col6[
+## Beispiele:
+- Batterie und wiederaufladbare Batterie (Akkumulator)
+- Generator im Kraftwerk
+- Dynamo am Fahrrad
+- Solarzelle
+- Brennstoffzelle
+- Peltieelement
+]
+
+.col6[
+## Schaltzeichen
+![Quellen Symbole](../img/Quellen-symbole.gif)
+]
+---
+# Bauelemente: Widerstand
+
+### Schaltzeichen
+
+![Widerstand Symbol](../img/Widerstand-symbol.jpeg)
+
+### Beispiele
+- fix vorgegeber Widerstand → Festwiderstand
+- einstellbarer Widerstand → Potentiometer
+- von Umwelteinflüsen abhängige Widerstände (Sensor)
+  - von der Temperatur → PTC, NTC
+  - vom Lichteinfall → LDR
+  - vom mechanischen Zug (Dehnung) → Dehnmessstreifen
+
+???
+Die deutsche Sprache kann hier etwas verwirrend sein.
+Auf englisch z.B. separate Wörter für die Eigenschaft (Resistance) und das Bauelement (Resistor)
+
+---
+# Bauelemente: Diode
+
+- **Halbleiter:**
+  - Werkstoff z.B. Silizium
+  - Stromfluss nur in eine Richtung möglich, wie Einbahnstrasse
+- **Anode:** an Plus-Pol; **Kathode:** an Minus-Pol bzw. 0V
+- **Anwendung:** Gleichrichterschaltungen (jedes Steckernetzteil)
+
+.col6[
+[![Dioden Symbol](../img/diode-symbol.png)](../img/diode-symbol.png)
+]
+.col6[
+[![Diodenkennlinie](../img/Diodenkennlinie.jpg)](../img/Diodenkennlinie.jpg)
+]
+
+* Spannungsabfall über Diode annähernd konstant
+* Baugrösse und Typ der Diode bestimmt den maximalen Strom
+---
+# Bauelemente: Light Emitting Diode, LED
+
+* fast wie eine gewöhnliche Diode
+* strahlt Licht ab, wenn von Strom durchflossen wird.
+
+[![LED Kennlinie](../img/LED Kennlinie.jpg)](../img/LED Kennlinie.jpg)
+
+---
+# Bauelemente: LED
+
+.col6[
+### LED-Farben
+* klassische LEDs senden Licht **einer** bestimmten Farbe (Wellenlänge) aus.
+* Farbe abhänging vom verwendeten Halbleitermaterial
+
+![LED Wellenlänge.jpg](../img/LED Wellenlänge.jpg)
+
+]
+
+.col6[
+### Anwendung Baulement:
+
+* langes Beinchen am Bauelement geht an **+**, kürzeres Beinchen an **-**
+* Vorwiderstand zur Strombegrenzung
+
+![../img/led-pol.png](../img/led-pol.png)
+]
+
+???
+Weisse LEDs bestehen meistens aus einer Blau leuchtenden LED und einer gelb leuchtenden Phosphorschicht. Die Phosphorschicht wird von der blauen LED zum Leuchten angeregt.
+
+---
+# Bauelemente: Transistor
+
+steuern elektrische Ströme &rarr; ein steuerbares Ventil bzw. Schalter
+
+Beispiel NPN Transistor:
+- drei Anschlüsse: Basis (B), Collector (C), Emitter (E)
+- kleiner Strom I<sub>B</sub> zwischen Basis und Emitter *steuert* grossen Strom zwischen Collector und Emitter (Ic)
+
+.col3[
+[![Transistor Symbol](../img/transistor-symbol-npn.png)](../img/transistor-symbol-npn.png)
+]
+.col9[
+[![Transistor Kennlinie](../img/transistor-kennlinie.png)](../img/transistor-kennlinie.png)
+]
+
+???
+In Kennlinie zeigen wie
+- digital Betrieb (Schalter)
+- analog Betrieb (Verstärker)
+
+Wie bei den Dioden ist der maximale Strom durch Typ und Baugrösse bestimmt.
+
+Es gibt noch andere Transistoren die leicht anders anzusteuern sind.
+
+Integrierte Schaltungen (ICs, Chips, Käfer) bestehen so gut wie ausschliesslich aus Transistoren und Dioden.
+
+---
+# Erste Schaltung: LED mit Batterie
+
+.col6[
+* **Erinnerung:**: Dioden (somit auch LEDs) werden durch Überstrom zerstört
+
+* **Frage:** Wie schliesse ich eine LED an eine Batterie, mit höherer Spannung als die LED, ohne sie zu zerstören?
+
+* **Antwort:**
+  - Strom durch die Diode begrenzen!
+  - zusätzliches Bauelement, dass den Strom limitiert &rarr; Festwiderstand
+]
+--
+count:false
+.col6[
+![Schema LED mit Vorwiderstand](../img/LED Vorwiderstand Schema.png)
+]
+
+.row[
+* Betriebsspannung U<sub>F</sub> und Nennstrom für LEDs siehe Datenblatt
+  * U<sub>F</sub>(rot) = 1.6–2.2&nbsp;V
+  * U<sub>F</sub>(gelb,grün) = 1.9–2.5&nbsp;V
+  * U<sub>F</sub>(blau,weiß) = 2.7–3.5&nbsp;V
+  * Nennstrom I<sub>LED</sub> für kleine LEDs ~ 20&nbsp;mA.
+]
+
+---
+#Erste Schaltung als Prototyp aufbauen: Breadboard
+
+- Rot und blau (aussen) zeilenweise durchkontaktiert
+  - Sinnvoll für +5V (rot), GND (blau)
+- Innere Kontakte spaltenweise durchkontaktiert
+
+.col6[
+[![Verbindungen in einem Breadboard](../img/basic_breadboard_layout_wiss.png)](../img/basic_breadboard_layout.png)
+
+* Arduino liefert 3.3V, 5V und Masse (GND) direkt vom Board (siehe PinOut!)
+]
+
+--
+count:false
+.col6[
+[![Verbindungen in einem Breadboard](../img/Aufg_1.1_LED_bb.png)](../img/Aufg_1.1_LED_bb.png)
+]
+
+
+---
+# Aufgabe 1.2
+
+## Ausgangslage
+Mit dem Arduino UNO als Spannungsquelle erstellen Sie einen einfachen Stromkreis mit LED und Vorwiderstand. Verwenden Sie nur die Anschlüsse für +5V und 0V (GND). Software benötigen Sie in der nächsten Übung.
+
+.col9[
+## Auftrag
+1. Bauen Sie Ihre Schaltung auf und verbinden Sie diese mit dem Arduino.
+1. Schliessen Sie den Arduino am USB Port Ihres Rechners an und überprüfen Sie, ob das Ergebnis Ihren Erwartungen entspricht.
+
+  **Zeit:** 20 Minuten
+
+## Hinweis LED-Bauteil
+* langes Beinchen am Bauelement geht an **+**
+* kürzeres Beinchen geht an **-**
+]
+
+.col3[
+[![Arduino Uno PinOut](../img/uno_wiring_pinout_super.jpeg)](../img/uno_wiring_pinout_super.jpeg)
+]
+
+---
+# Arduino GPIO
+
+.col6[
+### General Purpose Input/Output
+* Verwendungsart **im Programm (setup) definieren**
+  - Input zum Auslesen von Sensoren (z.B. Taster)
+  - Output zum Steuern von Aktoren (z.B. LED)
+* digitale Zustände: HIGH (> 3V) oder LOW (< 0.8V)
+
+```arduino
+#define LED 9
+void setup(){
+  pinMode(LED, OUTPUT);
+}
+void loop(){
+  int state=!digitalRead(LED);
+  digitalWrite(LED, state);
+  delay(500);
+}
+```
+]
+
+.col6[
+
+[![Arduino Uno PinOut](../img/uno_wiring_pinout_super.jpeg)](../img/uno_wiring_pinout_super.jpeg)
+
+#### Mehrfachbelegungen für
+- Bussysteme (pink, grau, RX,TX)
+- Analog-Digital Wandler (grün)
+- PWM (rot)
+]
+
+???
+
+---
+count: false
+
+# Sichere Tasterzustände definieren
+
+- **Pulldown Widerstand**
+  * sorgt für definiertes 0V-Potential bei geöffnetem Taster
+  * Arduino GPIO Pin zwischen 4.7k&ohm; Widerstand an Masse (GND) und Taster an +5 V anschliessen
+
+<hr>
+
+.col6[
+### Beispiel: Taster mit Pulldown
+[![Pulldown](../img/PullDownBtn_LED_bb.png)](../img/PullDownBtn_LED_bb.png)<br>
+]
+
+.col6[
+```arduino
+#define BUTTON 8
+#define LED_PIN 9
+
+void setup()
+{
+  pinMode(BUTTON, INPUT);
+  pinMode(LED_PIN, OUTPUT);
+}
+
+void loop()
+{
+  int btn=digitalRead(BUTTON);
+  digitalWrite(LED_PIN, btn);
+}
+
+```
+]
+
+--
+.row[
+- **Pullup:** (genau anders herum; Taster-Zustand unbetätigt *high*)
+- digitalen Eingang mit hochohmigen Widerstand an +5 V und Taster an Masse (GND) anschliessen
+]
+???
+**Tipp: ** Verdrahtung von Mikrocontroller und Peripherie dokumentieren ;-)
+
+kurze Intro zum Verständnis, eventuell nochmal bei Transistoren...
+
+---
+
+# Aufgabe 1.3
+Eine LED soll leuchten, solange der Taster betätigt ist. Sie wollen zusätzlich die Anzahl Zyklen zählen, wie lange der Taster betätigt wurde. Den Wert geben Sie nach jedem Loslassen des Tasters einmal auf dem Seriellen Monitor aus.
+
+1. Installieren Sie die [Fritzing-Software](http://fritzing.org/home/)
+1. Erstellen Sie einen Schaltplan für obige Schaltung.
+1. Verdrahten Sie obige Schaltung.
+2. Erstellen Sie ein neues Arduino-Programm.
+3. Definieren Sie die entsprechenden DI / DO im `setup()`
+4. Implementieren und testen Sie die Funktionalität im `loop()`.
+
+**Zeit:** 40 Minuten
+
+**Ziel:** Alle Teilnehmer können einfache Elektronik-Schaltung lesen, aufbauen und Arduino programmieren
+
+???
+- gerne als Partnerarbeit
+
+---
+class: animated slideInRight
+background-image: url(../img/arduino_uno.png)
+# Zusammenfassung Block 1
+
+## Was hat Ihnen gefallen oder nicht gefallen?
+
+## Was haben Sie gelernt, was haben Sie nicht verstanden?
+
+    </textarea>
+    <script src="../js/remark-latest.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS_HTML&delayStartupUntil=configured"></script>
+    <!--script src="http://gnab.github.io/remark/downloads/remark-latest.min.js" type="text/javascript"></script-->
+    <!--script src="../js/MathJax.js"-->
+    </script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function(){
+      var slideshow = remark.create();
+      // Setup MathJax
+      MathJax.Hub.Config({
+          tex2jax: {
+          skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+          }
+      })
+
+      /*MathJax.Hub.Queue(function() {
+          $(MathJax.Hub.getAllJax()).map(function(index, elem) {
+              return(elem.SourceElement());
+          }).parent().addClass('has-jax');
+      })*/
+    })
+      MathJax.Hub.Configured();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IoT - Kurs Block 2</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style_zbw.css">
+    <link rel="stylesheet" href="../css/animate.css">
+
+  </head>
+  <body>
+    <textarea id="source">
+
+# IoT - Block 02
+
+## Roadmap
+
+.bigger_font[
+- erstellen einfache Elektronik-Schaltungen auf Breadboard
+- benutzen Sensoren: analog vs. digital
+- benutzen komplexe Aktoren
+
+]
+
+.img_half_width[
+![Problemstellung](../img/aufg_2.2.jpg)
+]
+
+---
+
+# Vertiefungsübung
+
+## Ausgangslage
+
+Erstellen Sie eine Schaltung mit einem Taster sowie einer roten und einer grünen LED zuzüglich der benötigten Vorwiderstände.
+Ihr Arduino sorgt dafür, dass nur die rote LED leuchtet, solange der Taster nicht betätigt ist. Wird der Taster betätigt, soll nur die grüne LED leuchten.
+
+## Zeit:
+
+30 Minuten
+
+---
+# Troubleshooting-Tips
+
+### Generelle Regeln (wie sonst auch):
+- Teile und herrsche: Teilsysteme überprüfen
+- nur einzelne Änderungen vornehmen
+- Notizen machen, was wie getestet wurde
+- beobachten und messen anstatt spekulieren
+
+--
+count: false
+
+### Im Umgang mit Hardware:
+- Spannungsversorgung prüfen &rarr; Voltmeter statt Finger :)
+- Steckverbindungen und Kabel prüfen &rarr; Durchgangsprüfer
+- Kommen die Signale dort an, wo sie hin sollen &rarr; Voltmeter; Durchgangsprüfer
+
+### wichtige Hilfsmittel
+* Durchgangsprüfer
+* Voltmeter
+
+### Hinweis zum Messen von elektr. Strömen
+*  Amperemeter **zwischen** Stromkreis anschliessen, brauchen wir hier nicht...
+
+???
+Wer hat bereits mit Multimeter gearbeitet?
+
+---
+
+# Analoge Sensoren
+
+spezielle Analog-Eingänge &rarr; 10-bit Analog-Digital-Konverter, liefert Werte zwischen 0 und 1023, z.B. für:
+- Spannungsmessung (max. 5 V)
+- Licht-abhängige Widerstände
+- Temperaturabhängige Widerstände
+
+--
+count:false
+.col6[
+### Spannung messen über Potentiometer
+<br>
+```arduino
+int sensorValue = 0;
+
+void setup() {
+  // init serial communication
+  Serial.begin(9600);
+}
+
+void loop() {
+  // read the analog in value:
+  sensorValue = analogRead(A1);
+  Serial.println(sensorValue);
+  delay(500); //500ms break
+}
+```
+]
+.col6.max_height400[
+![Analog Read](../img/Poti_ReadAnalog_schem.png)
+]
+
+---
+# Aufgabe: Lichtintensität messen
+
+Sie erstellen ein Programm zur Messung der prozentualen Helligkeit. Dazu benötigen Sie einen Spannungsteiler mit einem lichtabhängigen Widerstand (*LDR - light dependend resistor*).
+
+.col9[
+### Vorgehen
+1. Der Widerstand des *LDR* bei maximaler Dunkelheit beträgt etwa 12 k&ohm; und maximaler Helligkeit ca 400 &ohm;. Welche Spannungen fallen bei 5V über dem LDR bei Dunkelheit bzw. Sonnenlicht ab, wenn Sie einen 4.7 k&ohm; Widerstand dazu in Reihe schalten (Spannungsteiler)?
+2. Die Arduino-Analogeingänge liefern Werte von 0 bis 1023 für den Bereich zwischen 0 und 5 Volt. Berechnen Sie den kleinsten und grössten Wert für den Analogeingang Ihrer Schaltung.
+3. Lesen Sie in der Arduino-Hilfe, wie `map`-Funktion Ihre Messwerte in den Bereich von 0 bis 100 % konvertiert.
+]
+.col3[
+![Analog Read](../img/LDR_ReadAnalog_schem.png)
+]
+.row[
+** Erwartetes Ergebnis:** Ausgabe der prozentuale Helligkeit auf serieller Schnittstelle
+
+**Zeit:** 45 Minuten
+]
+
+???
+### Hinweise Dozent
+- [Arduino Tutorials](http://www.arduino.org/learning/tutorials/ide-examples)
+- loesungen/aufgabe2_poti_lcd/
+
+
+---
+
+# 16x2 Display via I²C Bus ansteuern
+- [Inter-Integrated Circuit](https://de.wikipedia.org/wiki/I%C2%B2C): serieller Datenbus mit Hersteller-definierten Adressen
+- PCF8574-basierter *Adapter* via Bibliothek
+- 2 Datenleitungen: SDA (Serial Data) &rarr; `A4`, SCL (Serial Clock) &rarr; `A5`
+- http://www.arduino.cc/en/Reference/LiquidCrystal
+
+.col6.small[
+
+```arduino
+#include <Wire.h>
+#include <LiquidCrystal_PCF8574.h>
+
+// initialize library (try 0x27)
+LiquidCrystal_PCF8574 lcd(0x3F);
+
+void setup() {
+  lcd.begin(16, 2);// init LCD
+  // cursor on line 0 column 0
+  lcd.setCursor(0, 0);
+  lcd.setBacklight(255);
+  lcd.print("Hello World!");
+}
+
+void loop(){
+  lcd.setCursor(0, 1);
+  lcd.print(millis() / 1000);
+  delay(1000);
+}
+```
+]
+.col6.small[
+- `LiquidCrystal_PCF8574` via *Sketch - Bibliothek einbinden - Bibliothek hinzufügen* installieren zum Programm hinzugefügen.
+
+[![Arduino Uno PinOut](../img/uno_wiring_pinout_super.jpeg)](../img/uno_wiring_pinout_super.jpeg)
+]
+
+---
+
+# Aufgabe: LCD via I²C ansteuern
+## Ausgangslage
+Sie erweitern Ihr Programm um ein LC-Display.
+
+## Erwartetes Ergebnis
+Erweitern Sie Ihr Projekt, sodass die Lichtintensität zusätzlich auf dem LCD angezeigt wird.
+
+**Zeit:** 30 Minuten
+
+.img_half_width[
+![Problemstellung](../img/aufg_2.2.jpg)
+]
+---
+
+# Smarte Sensoren
+
+.col6[
+## Problem
+- Viele analoge (passive) Sensoren (Temperatur, Licht etc.) verhalten sich **nicht linear**.
+- müssen kalibriert werden
+- lange Messleitungen sind problematisch
+- je AD-Wandler-Eingang kann nur ein einzelner Sensor angeschlossen werden **&rarr; unpraktisch**
+]
+.col6[
+![Kennlinien NTC, PTC](../img/kennlinie_ptc_ntc.png)
+.reference[Quelle: [infosys.beckhoff.com](https://infosys.beckhoff.com/espanol.php?content=../content/1034/el320x/html/bt_rtd_technology.htm&id=6395)
+]
+]
+
+???
+- Nichtlinearität Sensoren anhand Grafik erklären
+
+--
+count:false
+.row[
+## Lösung: *smarte* Sensoren
+- enthalten selbst Mikrocontroller zur Umrechnung der Rohdaten
+- Rohdaten aus analogen Sensoren normiert und digitalisiert (float)
+- kommunizieren via Bussystem (SPI, I²C,...) mit Arduino & Co.
+- stellen ggf. mehrere Messwerte zur Verfügung
+- benötigen Bibliotheksfunktionen
+]
+
+---
+# Beispiel: DHT11 bzw. DHT22
+- **D**igital **H**umidity **T**emperature Sensor
+- liefert sowohl Temperatur und Luftfeuchtigkeit via Digital-Eingang
+- *Single Wire Serielle Schnittstelle* (spezielle serielle Schnittstelle)
+
+.col5[
+[![DHT11 Verschaltung](../img/DHT11_schem.png)](../img/DHT11_schem.png)
+.img_half_width[
+![DHT11](../img/DHT11-Pinout.jpg)
+]
+]
+
+--
+count: false
+
+.col7[
+```arduino
+#include <DHT.h>
+#define DHTPIN 8      // data pin
+#define DHTTYPE DHT11 // sensor type
+DHT dht(DHTPIN, DHTTYPE);
+
+void setup(){
+  dht.begin();
+}
+
+void loop(){
+	float temp=dht.readTemperature();
+	float humi=dht.readHumidity();
+	...
+	delay(500);
+}
+
+```
+.small[
+### &nbsp;benötigte Bibliotheken:
+- Adafruit Unified Sensor
+- DHT Sensor Library by Adafruit
+]
+]
+
+---
+
+# Aufgabe: DHT11 in Betrieb nehmen
+
+## Ausgangslage
+
+Sie erweitern Ihr letztes Arduino-Projekt um den DHT-Sensor.
+
+## Erwartetes Ergebnis:
+Erweitern Sie Ihr Projekt um die Ausgabe von Temperatur und Luftfeuchtigkeit. Die Anzeige soll per Tastendruck zwischen Helligkeit, Temperatur und Luftfeuchtigkeit umgeschaltet werden.
+
+Die Werte werden nur bei Änderung der Messwerte erneut ausgegeben.
+
+**Testen** Sie Ihr Projekt, indem Sie beispielsweise den DHT-Sensor anhauchen.
+
+**Zeit:** 30 Minuten
+
+???
+- loesungen/aufgabe23_dht_lcd/
+
+---
+
+class: animated slideInRight
+background-image: url(../img/arduino_uno.png)
+# Zusammenfassung Block 02
+
+Was haben Sie gelernt?
+    </textarea>
+    <script src="../js/remark-latest.min.js"></script>
+	 <!--script src="https://code.jquery.com/jquery-1.9.1.min.js"></script-->
+	 <script>
+      var slideshow = remark.create();
+
+    </script>
+  </body>
+</html>

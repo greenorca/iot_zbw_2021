@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>IoT - Kurs Block 7</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../css/style_zbw.css">
+    <link rel="stylesheet" href="../css/animate.css">
+  </head>
+  <body>
+    <textarea id="source">
+# IoT - Block 07
+
+## Projekt Zutrittskontolle mit RFID und PIN-Code
+
+.small_font[
+Der Zutritt zu Server- und Tresorräumen muss besonders geschützt werden. Sie realisieren die Zugangskontrolle der sensiblen Bereiche innerhalb einer Firma über eine Kombination von RFID und PIN-Code.
+
+Zur einfachen Wartbarkeit sollen RFID-IDs sowie die zugehörigen PINs zentral in einer Datenbank verwaltet werden. Die RFID-Lesegeräte und PIN-Eingabemodule werden über Arduino-Mikrcontroller betrieben. Die &muC; senden die gelesenen RFID-IDs und PINs an einen Server, der die empfangenen Daten mit der Datenbank vergleicht und das OK an den &mu;C sendet. Empfängt der &mu;C das OK, gibt er den Zugang für einige Sekunden frei. Zur komfortablen Bedienung werden sinnvolle Bedienungshinweise auf einem 16x2 LCD-Modul vom &mu;C ausgegeben.
+]
+.col6[
+![demo_rfid.jpg](../img/demo_rfid.jpg)
+]
+
+
+<!---
+**Stufe 1:**
+
+Ein prototypisches Python-Skript (`access_server.py`) zur Auswertung der RFIDs und Pin-Codes ist vorhanden. Sie müssen *nur* den Microcontroller programmieren und die RFIDs samst PINs im Skript hinterlegen.
+
+**Stufe 2:**
+
+Zusätzlich sorgen Sie dafür, dass mehrere RFID+PIN-Code Geräte unterschiedliche Räume absichern. Bestimmte Karten sollen Zugriff auf bestimmte Räume haben.
+
+**Stufe 3:**
+
+Die Firma will auch sogenannte Einmal-Pincodes ausstellen. Diese funktionieren ohne RFID-Karte, und nur einmal. Sie kümmern sich um alles weitere.
+-->
+---
+
+# Vorgehen
+
+Erarbeiten Sie sich zunächst Teillösungen:
+
+1. Studieren Sie zunächst, wie das RFID-Lesegerät am Arduino angeschlossen wird. Danach lesen Sie die IDs der RFID-Kärtchen aus. Nutzen Sie zunächst die Möglichkeit, die Daten per seriellem Monitor anzuzeigen. MFRC-522 Tutorial siehe [http://playground.arduino.cc/Learning/MFRC522](http://playground.arduino.cc/Learning/MFRC522)
+
+2. Studieren Sie in einem zweiten Projekt, wie Sie mit dem Arduino Eingaben vom Pin-Pad einlesen und auf dem LCD-Display anzeigen können. Wie können mehrere Ziffern hintereinander eingelesen und angezeigt werden? Wie kann das *Absenden* eines PIN-Codes realisiert werden? Keypad-Tutorial siehe [http://playground.arduino.cc/Main/KeypadTutorial](http://playground.arduino.cc/Main/KeypadTutorial).
+
+3. Nutzen Sie MQTT und ggf. Node-Red auf dem Server.
+
+
+### Stückliste
+
+* Raspberry oder Laptop; Arduino UNO R3
+* MFRC522 RFID-Leser + RFID-Kärtchen
+* LCD Display (mit I2C Modul)
+* Folientastatur; Durchgangsprüfer
+* Buzzer, LED zur akkustischen oder visuellen Freigabeanzeige
+* Breadboard, Breadboard-Kabel
+
+
+
+    </textarea>
+    <script src="../js/remark-latest.min.js"></script>
+	 <!--script src="https://code.jquery.com/jquery-1.9.1.min.js"></script-->
+	 <script>
+      var slideshow = remark.create();
+
+    </script>
+  </body>
+</html>
