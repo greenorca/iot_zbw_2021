@@ -15,8 +15,7 @@
   }
 
   h1, h2, h3 {
-    font-family: "OpenSans-SemiBold", sans-serif; /*'Yanone Kaffeesatz';*/
-		/*font-weight: lighter;*/
+    font-family: "OpenSans-SemiBold", sans-serif;
   }
 
   h1{
@@ -202,6 +201,10 @@
 			padding: 4px;
 			background-color: #eee;
 		}
+
+    li p+pre{
+      margin-top: -15px;
+    }
 
 		/* neat references for pictures */
 		.reference p{

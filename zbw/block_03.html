@@ -11,7 +11,6 @@
 # IoT - Block 3
 
 ## Roadmap
-1. Pulsweitenmodulierte Ausgänge
 1. Mikrocontroller-Architektur
 	- Technische Daten
 	- Interrupts
@@ -20,67 +19,6 @@
 1. Bussysteme
 1. Serielle Kommunikation
 
----
-# Aktoren
-
-Mikrocontroller kommunizieren mit bzw. verändern Umwelt über Aktoren, z.B.
-
-- LED, Buzzer direkt via GPIO (Vorwiderstände beachten!)
-- digitale Aktoren: Displays (LCD, OLED) via Bussystem
-- Motoren, Ventile:
-  - meist indirekt via Transistoren, Relais ansteuern weil Ströme zu gross für Arduino
-
----
-
-# Grundlagen Pulsweitenmodulation
-
-* **PWM-Ausgänge**: D3, D5, D6, D9-D11<sup>&star;</sup> (Kennzeichen: ~)
-  - ansteuern mit `analogWrite(PIN, wert)`
-  - `wert`: ganzzahlig, 8bit Auflösung (0-255)
-
---
-count: false
-.col6[
-![PWM](../img/pwm.gif)
-]
-.col6[
-#### Hintergrund
-- variabel einstellbare Impulsverhältnis ergibt geglättet ein *analoges* Signal
-- PWM-Frequenzen: D5,6: ~1kHz, D3,9-11: ~0.5kHz<sup>&star;</sup>
-
-#### Anwendungsbeispiele
-- LED dimmen
-- analoge Modellbahn steuern
-- Servos (Robotik) und Schrittmotoren ansteuern
-
-#### Weiterführende Links
-
-- https://www.arduino.cc/en/Tutorial/PWM
-- https://www.righto.com/2009/07/secrets-of-arduino-pwm.html
-]
-
-.row[
-.tiny[
-<sup>&star;</sup> gilt für Arduino Uno
-]
-]
----
-# Auftrag: LED über PWM ansteuern
-
-Sie steuern die Lichtintensität der LED auf Ihrem Board anhand der gemessenen Lichtintensität des LDR (siehe gestrige Übung).
-
-**Hinweis:** LED in Abhängigkeit von analogen Eingang dimmen:
-
-```arduino
-  sensorValue = analogRead(analogInPin);
-  // map it to the range of the analog out:
-  outputValue = map(sensorValue, 0, 1023, 0, 255);
-  // change the analog out value:
-  analogWrite(analogOutPin, outputValue);
-
-```
-
-**Zeit: ** 20 Minuten
 
 ---
 

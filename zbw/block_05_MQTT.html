@@ -102,10 +102,10 @@ Zeit: 45 Minuten
 dtostrf: siehe https://www.microchip.com/webdoc/AVRLibcReferenceManual/group__avr__stdlib_1ga060c998e77fb5fc0d3168b3ce8771d42.html
 
 ---
-# Apache Mosquitto &amp; Arduino: reloaded
+# Apache Mosquitto &amp; Arduino II
 
 ## Mehrere Messwerte gleichzeitig mit JSON senden
-
+* JSON: *Javascript Object Notation*, neben XML ein defacto-Standard für strukturierte Datenübertragung 
 * nur noch eine MQTT-Übertragung notwendig
 * benutzt *ArduinoJson* Bibliothek
 
@@ -177,7 +177,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   Serial.print("Message arrived [");
   Serial.print(topic);
   Serial.print("] ");
-  for (int i=0;i<length;i++) {
+  for (int i=0; i&lt;length; i++) {
     Serial.print((char)payload[i]);
   }
   Serial.println();
@@ -188,7 +188,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 # Ereignisfluss definieren mit Node-RED
 
-* verbindet Hardware (z.B. Arduinos, Raspis), APIs und Online-Services.
+* verbindet *things* (z.B. Arduinos, Raspis), APIs und Online-Services.
 * Browser-basierter Editor zum Erstellen von "Flows".
   - unterstützt Anbindung an Datenbanken
   - unterstützt MQTT, HTTP, uvm., weitere Plugins via NPM
@@ -210,20 +210,18 @@ count: false
   node-red-pi --max-old-space-size=256
   ```
 
-* NodeRed - Editor im Browser öffnen: [http://raspi-ip:3000](http://raspi-ip:3000)
+* NodeRed - Workflow-Editor im Browser öffnen: [http://raspi-ip:3000](http://raspi-ip:3000)
 
 * MySQL Support nachinstallieren (im regulären Benutzerspace)
   ```bash
   cd ~/.nodered
   npm install node-red-node-mysql
   ```
-<hr>
-
 ???
 
 TODO: Step-by-step Beschreibung für Flow-Setup MQTT->JSON->Function->MySQL
 
-grosser Schrott: npm-Installation nach diesem curl-Befehl hat auf Raspian Stretch funktioniert, nicht jedoch auf Buster (2019)
+vor 2021> grosser Schrott: npm-Installation nach diesem curl-Befehl hat auf Raspian Stretch funktioniert, nicht jedoch auf Buster (2019)
 .footnote.small[
 * node.js updaten auf Raspi: `curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -`
 ]
