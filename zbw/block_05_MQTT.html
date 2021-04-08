@@ -105,7 +105,7 @@ dtostrf: siehe https://www.microchip.com/webdoc/AVRLibcReferenceManual/group__av
 # Apache Mosquitto &amp; Arduino II
 
 ## Mehrere Messwerte gleichzeitig mit JSON senden
-* JSON: *Javascript Object Notation*, neben XML ein defacto-Standard für strukturierte Datenübertragung 
+* JSON: *Javascript Object Notation*, neben XML ein defacto-Standard für strukturierte Datenübertragung
 * nur noch eine MQTT-Übertragung notwendig
 * benutzt *ArduinoJson* Bibliothek
 
@@ -210,7 +210,7 @@ count: false
   node-red-pi --max-old-space-size=256
   ```
 
-* NodeRed - Workflow-Editor im Browser öffnen: [http://raspi-ip:3000](http://raspi-ip:3000)
+* NodeRed - Workflow-Editor im Browser öffnen: [http://raspi-ip:1880](http://raspi-ip:1880)
 
 * MySQL Support nachinstallieren (im regulären Benutzerspace)
   ```bash
@@ -252,11 +252,11 @@ node.debug("FunCount: "+count); // händische DEBUG-Ausgabe
 
 ---
 
-# Beispiel: INSERT MQTT-Daten in MySQL
+# Bsp: INSERT MQTT-Daten in MySQL
 
 ![nodered_flow_insertMySQL.png](../img/nodered_flow_insertMySQL.png)
 
-SQL-Statements in *Function* Node vorbereiten und as msg.topic an MySQL-Node weiterleiten:
+SQL-Statements in `Function` Node vorbereiten und als `msg.topic` Attribut an MySQL-Node weiterleiten:
 
 ## INSERT_PREP
 ```
